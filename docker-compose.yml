@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # Servicio 1: El cerebro (FastAPI)
+  api:
+    build: .
+    container_name: agriscan_backend
+    # CAMBIO 1: Ajuste del comando. 
+    # Si tu archivo se llama main.py y está en la raíz, usa "main:app".
+    # Si está dentro de una carpeta "app", usa "app.main:app".
+    # Usaremos main:app por defecto ya que suele ser el error común.
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    # CAMBIO 2: COMENTAMOS LOS VOLÚMENES TEMPORALMENTE
+    # Esto obliga a Docker a usar el archivo .h5 que copió el Dockerfile
+    # volumes:
+    #   - ./models:/app/models
+
+  # Servicio 2: La cara visible (Streamlit)
+  frontend:
+    build: .
+    container_name: agriscan_frontend
+    command: streamlit run app/frontend.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+    environment:
+      - API_URL=http://api:8000

@@ -1,0 +1,8 @@
+streamlit
+tensorflow-cpu  # Usar versión CPU para que el contenedor sea ligero en servidor barato
+pillow
+numpy
+fastapi
+uvicorn
+python-multipart
+requests
